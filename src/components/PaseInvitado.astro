@@ -193,13 +193,17 @@ const PASES_INICIAL = 1;
         }
     }
 
-    // Solo en `npm run dev`: sin ?i= la tarjeta sale con datos de ejemplo
-    // (3 pases, o los que diga ?prueba=N) para ver el diseño sin cargar un
-    // invitado en el panel. En el sitio publicado esto no existe.
+    // Link de muestra para que el cliente apruebe el diseño ANTES de ver el
+    // panel: ?ejemplo (3 pases) o ?ejemplo=N muestra la tarjeta con un
+    // invitado ficticio, sin tocar la base. En `npm run dev` sale siempre
+    // que el link no traiga ?i=.
     const params = new URLSearchParams(location.search);
-    const prueba =
-        import.meta.env.DEV && !params.get("i")
-            ? params.get("prueba") || "3"
+    const prueba = params.get("i")
+        ? null
+        : params.has("ejemplo")
+          ? params.get("ejemplo") || "3"
+          : import.meta.env.DEV
+            ? "3"
             : null;
 
     if (prueba) {
