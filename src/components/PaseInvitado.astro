@@ -1,0 +1,214 @@
+---
+// PaseInvitado.astro — tarjeta del pase personal
+//
+// Conectada al panel de invitados: el link trae un código (?i=k7m2p) y el
+// nombre y los pases se leen de la base (ver src/lib/invitado.ts).
+//
+// La sección arranca ESCONDIDA y aparece solo cuando llegan los datos del
+// invitado. Así la invitación genérica (sin ?i=) o una caída de la base no
+// muestran un "1 pase" inventado.
+//
+// Mismo estilo de tarjeta que CodigoVestimenta.astro. Las frases que
+// dependen del número salen de src/lib/pases.ts, igual que en el script.
+import { palabraPases, frasePases } from "../lib/pases";
+
+const PASES_INICIAL = 1;
+---
+
+<section
+    id="seccion-pase-invitado"
+    class="relative w-full py-4 px-6 overflow-hidden"
+    style="display: none;"
+>
+    <div class="max-w-sm lg:max-w-3xl mx-auto relative z-10" id="tarjeta-pase-invitado">
+        <div
+            class="backdrop-blur-sm rounded-3xl border-2 border-[#4b3a5e]/25 p-8 shadow-sm relative overflow-hidden"
+        >
+            <div class="text-center relative">
+                <!-- Título -->
+                <h3
+                    class="text-[#a8739a] tracking-[0.3em] uppercase text-lg md:text-2xl mb-3"
+                >
+                    Invitación con mucho cariño para
+                </h3>
+
+                <!-- Línea decorativa -->
+                <div class="flex items-center justify-center gap-2 mb-5">
+                    <div class="w-12 h-px bg-[#4b3a5e]/30"></div>
+                    <div class="w-2 h-2 rounded-full bg-[#4b3a5e]/40"></div>
+                    <div class="w-12 h-px bg-[#4b3a5e]/30"></div>
+                </div>
+
+                <!-- Nombre: puede bajar de renglón, no se achica -->
+                <p
+                    id="nombre-pase-invitado"
+                    class="font-charm text-[#4b3a5e] text-3xl md:text-4xl leading-snug mb-6 break-words"
+                >
+                    Nuestro invitado especial
+                </p>
+
+                <div id="bloque-pases-invitado">
+                    <p
+                        class="text-[#a8739a] tracking-[0.25em] uppercase text-base md:text-xl mb-3"
+                    >
+                        Pases asignados
+                    </p>
+
+                    <!-- Número destacado -->
+                    <div
+                        id="circulo-pases-invitado"
+                        class="rounded-2xl py-4 px-6 mb-6 border border-[#4b3a5e]/10"
+                    >
+                        <p
+                            id="numero-pase-invitado"
+                            class="font-sans text-5xl md:text-6xl text-[#4b3a5e] font-light leading-none"
+                        >
+                            {PASES_INICIAL}
+                        </p>
+                        <p
+                            id="palabra-pase-invitado"
+                            class="text-[#4b3a5e] tracking-[0.25em] uppercase text-base md:text-xl mt-2"
+                        >
+                            {palabraPases(PASES_INICIAL)}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Frase según la cantidad de pases -->
+                <p
+                    id="frase-pase-invitado"
+                    class="font-charm text-[#4b3a5e] text-lg md:text-2xl leading-relaxed"
+                >
+                    {frasePases(PASES_INICIAL)}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flores laterales, como en las demás tarjetas -->
+    <img
+        src="/imagenes/hojadorada.png"
+        alt=""
+        class="absolute left-0 top-8 md:top-24 w-18 h-18 md:w-28 md:h-28 opacity-0 pointer-events-none z-20"
+        id="hoja-pase-left"
+    />
+    <img
+        src="/imagenes/hojadorada.png"
+        alt=""
+        class="absolute right-0 top-8 md:top-24 w-18 h-18 md:w-28 md:h-28 opacity-0 pointer-events-none z-20 scale-x-[-1]"
+        id="hoja-pase-right"
+    />
+    <img
+        src="/imagenes/florlateral.png"
+        alt=""
+        class="absolute left-0 top-12 md:top-24 w-18 h-18 md:w-28 md:h-28 opacity-0 pointer-events-none z-30"
+        id="flor-pase-left"
+    />
+    <img
+        src="/imagenes/florlateral.png"
+        alt=""
+        class="absolute right-0 top-12 md:top-24 w-18 h-18 md:w-28 md:h-28 opacity-0 pointer-events-none z-30 scale-x-[-1]"
+        id="flor-pase-right"
+    />
+</section>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import { datosInvitado, alCambiarInvitado } from "../lib/invitado";
+    import { palabraPases, frasePases } from "../lib/pases";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    function pintarPase(nombre: string | null, pases: number | null) {
+        const conPases = Number.isInteger(pases) && (pases as number) > 0;
+
+        const el = document.getElementById("nombre-pase-invitado");
+        if (el && nombre) el.textContent = nombre;
+
+        const bloque = document.getElementById("bloque-pases-invitado");
+        if (bloque) bloque.style.display = conPases ? "" : "none";
+
+        const frase = document.getElementById("frase-pase-invitado");
+        if (frase) frase.textContent = frasePases(conPases ? pases : null);
+
+        if (!conPases) return;
+        const n = pases as number;
+        const num = document.getElementById("numero-pase-invitado");
+        const palabra = document.getElementById("palabra-pase-invitado");
+        if (num) num.textContent = String(n);
+        if (palabra) palabra.textContent = palabraPases(n);
+    }
+
+    let animada = false;
+
+    function animarEntrada() {
+        if (animada) return;
+        animada = true;
+        gsap.set("#tarjeta-pase-invitado", { opacity: 0, y: 40 });
+        gsap.set("#circulo-pases-invitado", { opacity: 0, scale: 0.9 });
+        ScrollTrigger.create({
+            trigger: "#seccion-pase-invitado",
+            start: "top 75%",
+            once: true,
+            onEnter: () => {
+                gsap.timeline()
+                    .to("#tarjeta-pase-invitado", {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1.4,
+                        ease: "power3.out",
+                    })
+                    .to(
+                        "#circulo-pases-invitado",
+                        { opacity: 1, scale: 1, duration: 1, ease: "back.out(1.4)" },
+                        0.5,
+                    )
+                    .to(
+                        "#hoja-pase-left, #hoja-pase-right",
+                        { opacity: 0.85, duration: 1.6, ease: "power2.out" },
+                        0.3,
+                    )
+                    .to(
+                        "#flor-pase-left, #flor-pase-right",
+                        { opacity: 0.9, duration: 1.6, ease: "power2.out" },
+                        0.5,
+                    );
+            },
+        });
+    }
+
+    function mostrarInvitado(inv: any) {
+        const seccion = document.getElementById("seccion-pase-invitado");
+        if (!seccion) return;
+        // Sin invitado (link sin código o base caída) la tarjeta no aparece.
+        // Si lo borraron, lo tapa LinkNoDisponible.
+        if (!inv) return;
+        const sinPases = inv.funciones && inv.funciones.pases === false;
+        pintarPase(inv.nombre, sinPases ? null : inv.pases);
+        if (seccion.style.display === "none") {
+            seccion.style.display = "";
+            animarEntrada();
+            ScrollTrigger.refresh();
+        }
+    }
+
+    // Solo en `npm run dev`: sin ?i= la tarjeta sale con datos de ejemplo
+    // (3 pases, o los que diga ?prueba=N) para ver el diseño sin cargar un
+    // invitado en el panel. En el sitio publicado esto no existe.
+    const params = new URLSearchParams(location.search);
+    const prueba =
+        import.meta.env.DEV && !params.get("i")
+            ? params.get("prueba") || "3"
+            : null;
+
+    if (prueba) {
+        mostrarInvitado({
+            nombre: Number(prueba) === 1 ? "María López" : "Familia Rodríguez Fernández",
+            pases: Number(prueba) || 1,
+        });
+    } else {
+        datosInvitado().then(mostrarInvitado);
+        alCambiarInvitado(mostrarInvitado);
+    }
+</script>

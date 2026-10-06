@@ -1,26 +1,9 @@
 @import "tailwindcss";
 
 
-/* Fuente personalizada Tangerine */
-@font-face {
-  font-family: 'Tangerine Bold';
-  src: url('/fonts/Tangerine_Bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-.font-tangerine {
-  font-family: 'Tangerine Bold', cursive !important;
-}
-
 /* Para el nombre */
 .font-great-vibes {
   font-family: 'Great Vibes', cursive !important;
-}
-
-/* Para mis XV años */
-.font-crimson {
-  font-family: 'Crimson Text', serif !important;
 }
 
 /* Para dedicatoria*/

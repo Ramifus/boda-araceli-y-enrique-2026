@@ -4,31 +4,28 @@ import Layout from "../layouts/Layout.astro";
 import Portada from "../components/Portada.astro";
 import NombresFlores from "../components/NombresFlores.astro";
 import Dedicatoria from "../components/Dedicatoria.astro";
-import Reproductor from "../components/Reproductor.astro";
 import Bendicion from "../components/Bendicion.astro";
 import NombrePadres from "../components/NombresPadres.astro";
 import Fecha from "../components/Fecha.astro";
 import Contador from "../components/Contador.astro";
 import Foto2 from "../components/Foto2.astro";
-import DireccionCivil from "../components/DireccionCivil.astro";
 import DireccionCeremonia from "../components/DireccionCeremonia.astro";
 import DireccionRecepcion from "../components/DireccionRecepcion.astro";
 import RecepcionSegundoDia from "../components/RecepcionSegundoDia.astro";
-import Itinerario from "../components/Itinerario.astro";
-import Reservas from "../components/Reservas.astro";
-import SugerenciaRegalo from "../components/SugerenciaRegalo.astro";
 import CodigoVestimenta from "../components/CodigoVestimenta.astro";
-import Restriccion from "../components/Restriccion.astro";
 import Confirmar from "../components/Confirmar.astro";
 import DespedidaDedicatoria from "../components/DespedidaDedicatoria.astro";
 import Foto4 from "../components/Foto4.astro";
 import Foto3 from "../components/foto3.astro";
 import Des from "../components/Des.astro";
-import Cartelera from "../components/Cartelera.astro";
-import Galeria from "../components/Galeria.astro";
+import PaseInvitado from "../components/PaseInvitado.astro";
+import LinkNoDisponible from "../components/LinkNoDisponible.astro";
 ---
 
 <Layout title="Nuestra Boda · Araceli & Enrique">
+    <!-- Tapa la invitación si los novios borraron a este invitado -->
+    <LinkNoDisponible />
+
     <!-- PORTADA (se muestra primero, bloquea scroll) -->
     <Portada />
 
@@ -36,25 +33,19 @@ import Galeria from "../components/Galeria.astro";
     <div id="contenido-principal">
         <NombresFlores />
         <Dedicatoria />
-        <!-- <Reproductor /> -->
         <Bendicion />
         <NombrePadres />
         <Fecha />
         <Contador />
         <Foto2 />
-        <!-- <DireccionCivil /> -->
         <DireccionCeremonia />
         <DireccionRecepcion />
         <RecepcionSegundoDia />
-           <Foto3 />
-        <!-- <Itinerario /> -->
-        <!-- <Reservas numeroPases={1} /> -->
-        <!-- <SugerenciaRegalo /> -->
+        <Foto3 />
         <CodigoVestimenta />
-        <!-- <Restriccion /> -->
-        <!-- <Galeria /> -->
+        <!-- Tarjeta del pase: aparece solo con link de invitado (?i=) -->
+        <PaseInvitado />
         <Confirmar />
-        <!-- <Cartelera /> -->
         <DespedidaDedicatoria />
         <Foto4 />
      
